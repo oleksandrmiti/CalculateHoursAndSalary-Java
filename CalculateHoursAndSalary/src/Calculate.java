@@ -10,29 +10,66 @@ public class Calculate {
 
     public int days;
     private int totalHours, totalMinutes, hoursStart, hoursFinish, minutesStart, minutesFinish, finalMinutes, finalHours;
-    private float salaryForHours, salaryForMinutes, totalSalary,convertedMinutesToHours;
-    private boolean doQuotationAgain;
+    private float totalSalary,convertedMinutesToHours;
+    private boolean validDays, doQuotationAgain;
     private String askAgain;
     private double rate = 11.3;
 
     DecimalFormat money = new DecimalFormat("\u20AC0.00"); //Decimal format for Euro character that showing 2 number after dot
 
-    public Calculate(){
 
+    public Calculate(){
+        totalHours = 0;
+        totalMinutes = 0;
+        totalSalary = 0;
+        hoursStart = 0;
+        hoursFinish = 0;
+        minutesStart = 0;
+        minutesFinish = 0;
     }
 
-
+    public void resetData(){
+        totalHours = 0;
+        totalMinutes = 0;
+        totalSalary = 0;
+        hoursStart = 0;
+        hoursFinish = 0;
+        minutesStart = 0;
+        minutesFinish = 0;
+    }
     public void setDays(){
-        System.out.print("Enter how many days you are working: ");
-        days = Main.sc.nextInt();
+        do {
+            try {
+                System.out.print("Enter how many days you are working: ");
+                days = Main.sc.nextInt();
+                validDays = true;
+            }
+            catch(java.util.InputMismatchException e){
+                System.err.print("Please use numbers.\n");
+                Main.sc.next();
+            }
+        } while (!validDays);
     }
     public void getDayNum(int dayNumber){
         System.out.print("\nEnter details for day #"+ dayNumber);
     }
     public void setStartTime(){
-        System.out.print("\nEnter what time are you starting, firstly enter hours and then minutes.");
-        System.out.print("\nEnter hours: ");
-        hoursStart = Main.sc.nextInt();
+        do {
+            System.out.print("\nEnter what time are you starting, firstly enter hours and then minutes.");
+            try {
+                System.out.print("\nEnter hours: ");
+                hoursStart = Main.sc.nextInt();
+                if(hoursStart == 0){
+                    Main.Again = false;
+                }
+                validDays = true;
+            }
+            catch(java.util.InputMismatchException e){
+                System.err.print("Please use numbers.\n");
+                Main.sc.next();
+            }
+
+        } while (!validDays);
         System.out.print("Enter minutes: ");
         minutesStart = Main.sc.nextInt();
     }
@@ -44,38 +81,19 @@ public class Calculate {
         minutesFinish = Main.sc.nextInt();
     }
     public void calculateHoursWorked(){
-//        finalMinutes = minutesFinish - minutesStart;
-//        finalHours = hoursFinish - hoursStart;
-//        if (minutesStart > minutesFinish){
-//            finalHours -=1;
-//        }
-//        if (finalMinutes < 0){
-//            finalMinutes = finalMinutes * (-1);
-//        }
-//        totalHours += finalHours;
-//        totalMinutes += finalMinutes;
-//        System.out.println(totalHours);
-//        System.out.println(totalMinutes);
-        if (minutesFinish > minutesStart){
-            finalHours = hoursFinish - hoursStart;
-            finalMinutes = minutesFinish - minutesStart;
-        } else{
-            hoursFinish= hoursFinish-1;
+        if(minutesStart<minutesFinish){
+            hoursFinish=hoursFinish-1;
             minutesFinish+=60;
-            finalHours = hoursFinish - hoursStart;
-            finalMinutes = minutesFinish - minutesStart;
         }
+        finalHours = hoursFinish - hoursStart;
+        finalMinutes = minutesFinish - minutesStart;
         totalHours += finalHours;
         totalMinutes += finalMinutes;
-        System.out.println(totalHours);
-        System.out.println(totalMinutes);
     }
     private void setMinutesToHours(){
     convertedMinutesToHours = totalMinutes/60f;
-
     }
     public void convertOutput(){
-
         do{
             totalMinutes-=60;
             totalHours+=1;
@@ -86,10 +104,9 @@ public class Calculate {
         totalSalary = (float) ((totalHours+convertedMinutesToHours) * rate);
     }
     public void outputHoursWorked(){
-
         calculateSalary();
         System.out.print("\n\nTotal:");
-        System.out.print("\nHours worked:"+totalHours+":"+totalMinutes);
+        System.out.print("\nHours worked: "+totalHours+":"+totalMinutes);
         System.out.print("\nYour salary for this period: "+money.format(totalSalary));
     }
 
@@ -102,9 +119,9 @@ public class Calculate {
             System.out.print("\nPlease enter your answer: "); // Asking user to enter an answer
             askAgain = Main.sc.next();
             switch (askAgain) {
-                case "Y": case "y": Main.Again = false; doQuotationAgain = true;
+                case "Y": case "y": Main.Again = true; doQuotationAgain = true;
                     break;
-                case "N": case "n": Main.Again = true;  doQuotationAgain = true;
+                case "N": case "n": Main.Again = false;  doQuotationAgain = true;
                     break;
                 default:
                     System.err.println("Enter Y or N.");
